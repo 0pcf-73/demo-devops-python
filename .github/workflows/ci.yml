@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ feature/F1S1YCF ]
+    branches: [ main, feature/F1S1YCF ]
   pull_request:
-    branches: [ feature/F1S1YCF ]
+    branches: [ main, feature/F1S1YCF ]
 
 jobs:
   build:
@@ -38,6 +38,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install flake8 coverage
+
+      # Aquí se copia el archivo .env.ci a .env
+      - name: Setup .env for CI
+        run: cp .env.ci .env      
 
       - name: Run migrations
         run: python manage.py migrate
