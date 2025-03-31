@@ -40,10 +40,10 @@ jobs:
           pip install flake8 coverage
 
       - name: Run migrations
-        run: py manage.py migrate
+        run: python manage.py migrate
 
       - name: Run tests
-        run: py manage.py test
+        run: python manage.py test
 
       - name: Run flake8
         run: flake8 .
