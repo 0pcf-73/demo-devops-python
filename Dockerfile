@@ -1,27 +1,40 @@
-FROM python:3.11-slim
-
-# Establecer el directorio de trabajo
+# Etapa 1: Build (opcional para instalar dependencias)
+FROM python:3.11-slim AS builder
 WORKDIR /app
 
-# Copiar archivos necesarios
+# Instalar dependencias de sistema necesarias para compilar (ej. gcc)
+RUN apt-get update && apt-get install -y gcc
+
+# Copiar el fichero de requerimientos y preinstalar dependencias
 COPY requirements.txt .
+RUN pip install --upgrade pip && pip install --user -r requirements.txt
 
-# Instalar dependencias
-RUN pip install --no-cache-dir -r requirements.txt
+# Etapa 2: Imagen final
+FROM python:3.11-slim
+WORKDIR /app
 
-# Copiar el resto de la aplicación
-COPY . .
-
-# Crear usuario no root y cambiar permisos
-RUN useradd -m appuser && chown -R appuser /app
+# Crear un usuario no root para mayor seguridad
+RUN adduser --disabled-password appuser
 USER appuser
 
-# Exponer el puerto
-EXPOSE 8000
+# Copiar dependencias instaladas en la etapa builder
+COPY --from=builder /root/.local /home/appuser/.local
+ENV PATH="/home/appuser/.local/bin:${PATH}"
 
-# Definir variables de entorno
+# Copiar el código de la aplicación (se copia todo el contenido del proyecto)
+COPY --chown=appuser:appuser . .
+
+# Definir variables de entorno necesarias
+ENV PORT=8000
+ENV DJANGO_SETTINGS_MODULE=demo_devops.settings
 ENV PYTHONUNBUFFERED=1
 
-# Ejecutar migraciones y arrancar el servidor en modo desarrollo
-CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
+# Exponer el puerto en el que correrá la aplicación
+EXPOSE ${PORT}
 
+# Agregar un chequeo de salud para que Docker pueda verificar que la app responde
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+  CMD curl -f http://localhost:${PORT}/api/ || exit 1
+
+# Ejecutar las migraciones y levantar el servidor
+CMD ["sh", "-c", "py manage.py migrate && py manage.py runserver 0.0.0.0:${PORT}"]
