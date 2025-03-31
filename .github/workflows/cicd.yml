@@ -27,7 +27,10 @@ jobs:
           pip install pytest pytest-cov
       
       - name: Run tests
+        env:
+          DJANGO_SETTINGS_MODULE: demo.settings  # Asegurar que Django cargue la configuración correcta
         run: |
+          python manage.py migrate  # Aplicar migraciones antes de correr pruebas
           pytest --junitxml=report.xml --cov=.
       
       - name: Lint with flake8
