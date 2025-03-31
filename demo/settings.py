@@ -75,15 +75,9 @@ WSGI_APPLICATION = 'demo.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DATABASE_NAME'),
-        'USER': env('DATABASE_USER'),
-        'PASSWORD': env('DATABASE_PASSWORD'),
-        'HOST': env('DATABASE_HOST'),
-        'PORT': env('DATABASE_PORT'),
+    'default': dj_database_url.config(default=os.getenv("DATABASE_URL", "sqlite:///db.sqlite3"))
     }
-}
+
 
 
 # Password validation

@@ -26,6 +26,10 @@ jobs:
           pip install -r requirements.txt
           pip install pytest pytest-cov
       
+      - name: Set up test database  # 🔹 Agregar esta sección para usar SQLite
+        run: |
+          echo "DATABASE_URL=sqlite:///db.sqlite3" >> $GITHUB_ENV
+      
       - name: Run tests
         env:
           DJANGO_SETTINGS_MODULE: demo.settings  # Asegurar que Django cargue la configuración correcta
