@@ -48,7 +48,7 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y netcat-openbsd
           echo "Esperando a que PostgreSQL esté disponible..."
-          for i in {1..30}; do
+          for i in {1..100}; do
             nc -z postgres 5432 && echo "PostgreSQL está listo" && exit 0 || sleep 2
           done
           echo "PostgreSQL no se activó en el tiempo esperado" && exit 1        
