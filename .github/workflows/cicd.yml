@@ -41,6 +41,16 @@ jobs:
           pip install -r requirements.txt
           pip install pytest pytest-cov dj-database-url
 
+      - name: Esperar a que PostgreSQL esté listo
+        run: |
+          echo "Esperando a que PostgreSQL esté listo..."
+          for i in {1..10}; do
+            nc -z localhost 5432 && echo "PostgreSQL está listo" && exit 0
+            echo "Esperando..."
+            sleep 3
+          done
+          echo "PostgreSQL no está listo" && exit 1
+
       - name: Set up database URL
         run: echo "DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres" >> $GITHUB_ENV
 
@@ -61,4 +71,3 @@ jobs:
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
           docker build -t ypalomac/demo-devops-python:latest .
           docker push ypalomac/demo-devops-python:latest
-
