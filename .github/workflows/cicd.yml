@@ -11,6 +11,21 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,18 +40,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-cov dj-database-url
-      
-      - name: Set up test database  # 🔹 Agregar esta sección para usar SQLite
+
+      - name: Export environment variables for Django
         run: |
-          echo "DATABASE_URL=sqlite:///db.sqlite3" >> $GITHUB_ENV
-      
+          echo "DB_NAME=postgres" >> $GITHUB_ENV
+          echo "DB_USER=postgres" >> $GITHUB_ENV
+          echo "DB_PASSWORD=postgres" >> $GITHUB_ENV
+          echo "DB_HOST=localhost" >> $GITHUB_ENV
+          echo "DB_PORT=5432" >> $GITHUB_ENV
+
       - name: Run tests
         env:
-          DJANGO_SETTINGS_MODULE: demo.settings  # Asegurar que Django cargue la configuración correcta
+          DJANGO_SETTINGS_MODULE: demo.settings
         run: |
-          python manage.py migrate  # Aplicar migraciones antes de correr pruebas
+          python manage.py migrate
           pytest --junitxml=report.xml --cov=.
-      
+
       - name: Lint with flake8
         run: |
           pip install flake8
@@ -44,6 +63,14 @@ jobs:
       
       - name: Build and push Docker image
         if: github.event_name == 'push'
+        env:
+          DB_NAME: postgres
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
           docker build -t ypalomac/demo-devops-python:latest .
