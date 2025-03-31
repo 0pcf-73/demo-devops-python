@@ -2,7 +2,13 @@ import environ
 from pathlib import Path
 import dj_database_url
 import os
+import django
+from django.test.utils import setup_test_environment
 
+setup_test_environment()
+django.setup()
+
+from .models import User
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent

@@ -1,7 +1,16 @@
 import json
 from django.urls import reverse
 from rest_framework.test import APITestCase
-from .models import User
+import django
+from django.conf import settings
+from django.test.utils import setup_test_environment
+
+# Configurar Django antes de importar modelos
+setup_test_environment()
+django.setup()
+
+from .models import User  # Ahora sí importamos el modelo
+
 
 class TestUserView(APITestCase):
     def setUp(self):
