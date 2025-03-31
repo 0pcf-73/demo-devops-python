@@ -4,6 +4,7 @@ import dj_database_url
 import os
 import django
 from django.test.utils import setup_test_environment
+import dj_database_url
 
 setup_test_environment()
 django.setup()
@@ -84,10 +85,11 @@ WSGI_APPLICATION = 'demo.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(default=f'sqlite:///{BASE_DIR}/db.sqlite3')
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / "db.sqlite3",
     }
-
-
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
