@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from .serializers import UserSerializer
 from .models import User
 
+
 class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
@@ -26,3 +27,4 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer.save()
 
         return Response(serializer.data, status=201)
+    

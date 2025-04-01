@@ -14,6 +14,7 @@ class TestUserView(APITestCase):
 
 
     def test_post(self):
+
         response = self.client.post(self.url, self.data, format='json')
         self.assertEqual(response.status_code, 201)
 
@@ -30,12 +31,14 @@ class TestUserView(APITestCase):
 
 
     def test_get_list(self):
+
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(json.loads(response.content)), 1)
 
 
     def test_get(self):
+
         response = self.client.get(self.url + '1/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
