@@ -107,6 +107,11 @@ If the response is successful, the service will return an HTTP Status 200 and a 
     }
 ]
 ```
+![image](https://github.com/user-attachments/assets/1640298a-5436-4619-ab33-176b8b9b4374)
+![image](https://github.com/user-attachments/assets/3913b6a1-91d7-41ab-a104-174f5b5f81de)
+
+![image](https://github.com/user-attachments/assets/e8dd98bd-48ae-4086-b1b3-1d2a85446ab1)
+
 
 #### Get User
 
