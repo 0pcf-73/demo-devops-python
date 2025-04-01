@@ -1,0 +1,67 @@
+stages:
+  - build
+  - test
+  - analyze
+  - coverage
+  - docker_build
+  - deploy
+
+variables:
+  DOCKER_IMAGE: registry.example.com/demo-devops-python  # Reemplaza con la URL de tu registro Docker
+
+build:
+  stage: build
+  image: python:3.11-slim
+  script:
+    - pip install --upgrade pip
+    - pip install -r requirements.txt
+  artifacts:
+    paths:
+      - .  # Guarda el estado del repositorio para las siguientes etapas
+
+unit_tests:
+  stage: test
+  image: python:3.11-slim
+  script:
+    - pip install -r requirements.txt
+    - py manage.py test
+
+static_analysis:
+  stage: analyze
+  image: python:3.11-slim
+  script:
+    - pip install flake8
+    - flake8 .
+
+code_coverage:
+  stage: coverage
+  image: python:3.11-slim
+  script:
+    - pip install coverage
+    - coverage run --source=. manage.py test
+    - coverage report -m
+  artifacts:
+    reports:
+      cobertura: coverage.xml
+
+docker_build:
+  stage: docker_build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t $DOCKER_IMAGE:$CI_COMMIT_SHORT_SHA .
+    - docker push $DOCKER_IMAGE:$CI_COMMIT_SHORT_SHA
+
+deploy:
+  stage: deploy
+  image: bitnami/kubectl:latest
+  script:
+    - kubectl apply -f k8s/configmap.yaml
+    - kubectl apply -f k8s/secret.yaml
+    - kubectl apply -f k8s/deployment.yaml
+    - kubectl apply -f k8s/service.yaml
+    - kubectl apply -f k8s/ingress.yaml
+    - kubectl apply -f k8s/hpa.yaml
+  only:
+    - main
