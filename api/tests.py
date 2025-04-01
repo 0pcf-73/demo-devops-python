@@ -6,7 +6,6 @@ from .models import User
 
 class TestUserView(APITestCase):
 
-
     def setUp(self):
         user = User(name='Test1', dni='09876543210')
         user.save()
