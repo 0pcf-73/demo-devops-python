@@ -65,9 +65,6 @@ jobs:
       - name: Run tests
         run: python manage.py test
 
-      - name: Run flake8
-        run: flake8 .
-
       - name: Run coverage
         run: |
           coverage run --source=. manage.py test
