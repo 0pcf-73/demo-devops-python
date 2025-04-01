@@ -25,7 +25,7 @@ class TestUserView(APITestCase):
         self.assertIn('id', data)
         self.assertIsInstance(data['id'], int)
 
-        # Además, comprueba que se haya creado el usuario (total 2 en la base de datos)
+        # Además, comprueba que se haya creado el usuario
         self.assertEqual(User.objects.count(), 2)
 
 
@@ -38,4 +38,7 @@ class TestUserView(APITestCase):
     def test_get(self):
         response = self.client.get(self.url + '1/')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(json.loads(response.content), {"id": 1, "name": "Test1", "dni": "09876543210"})
+        self.assertEqual(
+            json.loads(response.content),
+            {"id": 1, "name": "Test1", "dni": "09876543210"}
+        )
