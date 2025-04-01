@@ -16,25 +16,23 @@ spec:
     spec:
       containers:
       - name: demo-devops-python
-        image: registry.example.com/demo-devops-python:latest  # Actualiza con tu imagen
+        image: demo-devops-python-app:latest
+        imagePullPolicy: Never
         ports:
         - containerPort: 8000
         env:
           - name: PORT
             value: "8000"
           - name: DJANGO_SETTINGS_MODULE
-            value: "demo_devops.settings"
-        # Importa variables no sensibles desde el ConfigMap
-        envFrom:
-          - configMapRef:
-              name: demo-devops-config
-        # Variables sensibles definidas en Secrets
-        env:
+            value: "demo.settings"
           - name: SECRET_KEY
             valueFrom:
               secretKeyRef:
                 name: demo-devops-secret
                 key: SECRET_KEY
+        envFrom:
+          - configMapRef:
+              name: demo-devops-config
         readinessProbe:
           httpGet:
             path: /api/

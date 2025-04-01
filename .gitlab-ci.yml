@@ -7,7 +7,7 @@ stages:
   - deploy
 
 variables:
-  DOCKER_IMAGE: registry.example.com/demo-devops-python  # Reemplaza con la URL de tu registro Docker
+  DOCKER_IMAGE: registry.example.com/demo-devops-python
 
 build:
   stage: build
@@ -17,7 +17,7 @@ build:
     - pip install -r requirements.txt
   artifacts:
     paths:
-      - .  # Guarda el estado del repositorio para las siguientes etapas
+      - .  
 
 unit_tests:
   stage: test
